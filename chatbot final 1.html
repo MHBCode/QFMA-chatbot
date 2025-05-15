@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>مساعد الهيئة</title>
+  <script src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #f2f2f2;
+      height: 100vh;
+      overflow: hidden;
+      direction: rtl;
+    }
+
+    .chat-window {
+      width: 100%;
+      height: 100vh;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://raw.githubusercontent.com/MohamedeEssam/QFMA/main/img1.png');
+      background-size: cover;
+      background-position: center;
+      padding: 10px 6px 6px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .chat-header img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin: 0 auto 6px; /* Centered with margin-bottom for spacing */
+      display: block;
+    }
+
+    .chat-header h2 {
+      margin: 6px 0 3px;
+      font-size: 14px;
+      text-align: center; /* Centered text */
+    }
+
+    .chat-header p {
+      color: #4CAF50;
+      font-size: 12px;
+      margin: 0;
+      text-align: center; /* Centered text */
+    }
+
+    #webchat {
+      flex-grow: 1;
+      flex-shrink: 1;
+      min-height: 0;
+      display: block;
+      direction: rtl;
+      overflow-y: auto;
+    }
+
+    .footer {
+      font-size: 11px;
+      color: #555;
+      text-align: center;
+      padding: 6px;
+      flex-shrink: 0;
+    }
+
+    .footer span {
+      color: #9c27b0;
+      font-weight: bold;
+    }
+
+    .footer a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .webchat__basic-transcript {
+      padding: 4px;
+      direction: rtl;
+    }
+
+    .webchat__bubble {
+      border-radius: 5px !important;
+      box-shadow: none !important;
+      margin: 4px 0 !important;
+      max-width: 85% !important;
+    }
+
+    .webchat__bubble--from-user {
+      background-color: rgba(41, 98, 255, 0.8) !important;
+      color: white !important;
+      margin-right: 10% !important;
+      margin-left: 5px !important;
+      text-align: right !important;
+    }
+
+    .webchat__bubble--from-bot {
+      background-color: rgba(241, 241, 241, 0.7) !important;
+      color: #333 !important;
+      margin-left: 10% !important;
+      margin-right: 5px !important;
+      text-align: right !important;
+    }
+
+    .webchat__bubble__content {
+      padding: 5px 8px !important;
+      font-size: 12px !important;
+      text-align: right !important;
+    }
+
+    .webchat__send-box {
+      padding: 6px !important;
+      background-color: #fff !important;
+      border-top: 1px solid #eee !important;
+      direction: rtl !important;
+    }
+
+    .webchat__send-box-text-box {
+      border-radius: 14px !important;
+      padding: 6px 10px !important;
+      border: 1px solid #ddd !important;
+      background-color: #f9f9f9 !important;
+      font-size: 12px !important;
+      text-align: right !important;
+    }
+
+    .webchat__send-box-button {
+      background-color: #2962FF !important;
+      border-radius: 50% !important;
+      width: 28px !important;
+      height: 28px !important;
+      margin-right: 5px !important;
+    }
+
+    .webchat__card {
+      border-radius: 8px !important;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+      margin: 5px 0 !important;
+      border: 1px solid #eee !important;
+      overflow: hidden !important;
+      max-width: 85% !important;
+    }
+
+    .webchat__card--from-bot {
+      margin-left: 8% !important;
+      margin-right: 5px !important;
+      background-color: white !important;
+    }
+
+    .webchat__card__content {
+      padding: 8px !important;
+      text-align: right !important;
+    }
+
+    .webchat__card__text {
+      margin-bottom: 8px !important;
+      text-align: right !important;
+    }
+
+    .webchat__card__image {
+      width: 100% !important;
+      border-radius: 5px 5px 0 0 !important;
+      margin-bottom: 8px !important;
+    }
+
+    .webchat__card__buttons {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 5px !important;
+      margin-top: 8px !important;
+      text-align: right !important;
+    }
+
+    .webchat__card__button {
+      background-color: #f1f0f0 !important;
+      color: #000 !important;
+      border-radius: 5px !important;
+      padding: 5px 8px !important;
+      text-align: center !important;
+      border: none !important;
+      cursor: pointer !important;
+    }
+
+    .webchat__card__button:hover {
+      background-color: #e0e0e0 !important;
+    }
+
+    .shadow-effect {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+      transition: box-shadow 0.2s ease;
+    }
+
+    @media (max-width: 480px) {
+      .chat-header img {
+        width: 50px;
+        height: 50px;
+      }
+      .chat-header h2 {
+        font-size: 13px;
+      }
+      .chat-header p {
+        font-size: 11px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .chat-header img {
+        width: 45px;
+        height: 45px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-window" id="chatWindow">
+    <div class="chat-header">
+      <img src="https://raw.githubusercontent.com/MohamedeEssam/QFMA/main/img1.png" alt="Hamad Avatar">
+      <h2>مرحباً أنا حمد</h2>
+      <p>كيف أستطيع خدمتك</p>
+    </div>
+
+    <div id="webchat"></div>
+
+    <div class="footer">مشغل بواسطة <a href="https://www.newtecx.com" target="_blank"><span>newtecx</span></a></div>
+  </div>
+
+  <script>
+  let webChatStore = null;
+  let directLine = null;
+  const styleOptions = {
+    botAvatarImage: 'https://raw.githubusercontent.com/MohamedeEssam/QFMA/main/img1.png',
+    bubbleBackground: 'rgba(241, 241, 241, 0.7)',
+    bubbleTextColor: '#333',
+    bubbleFromUserBackground: 'rgba(41, 98, 255, 0.8)',
+    bubbleFromUserTextColor: '#fff',
+    bubbleBorderRadius: 5,
+    sendBoxBackground: '#fff',
+    sendBoxTextColor: '#000',
+    sendBoxPlaceholderText: 'الرجاء إدخال استفسارك هنا',
+    rootHeight: '100%',
+    rootWidth: '100%',
+    showTimestamp: false,
+    bubbleMaxWidth: '85%',
+    cardEmphasisBackgroundColor: '#fff',
+    cardEmphasisBorderColor: '#eee',
+    cardEmphasisBorderRadius: 8,
+    cardEmphasisBorderStyle: 'solid',
+    cardEmphasisBorderWidth: 1,
+    cardEmphasisBoxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+    suggestedActionBackground: '#f1f0f0',
+    suggestedActionBorder: 'none',
+    suggestedActionBorderRadius: 5,
+    suggestedActionTextColor: '#000',
+    suggestedActionHeight: 32,
+    textContentAlignment: 'right',
+    adaptiveCardRenderer: {
+      richCardWrapTitle: true,
+      showCardTitle: true
+    }
+  };
+
+  window.onload = function () {
+    initializeWebChat();
+    document.getElementById('chatWindow').classList.add('active');
+    document.querySelector('.chat-header img').classList.add('shadow-effect');
+  };
+
+  function initializeWebChat() {
+    webChatStore = window.WebChat.createStore({}, ({ dispatch }) => next => action => {
+      return next(action);
+    });
+
+    try {
+      directLine = window.WebChat.createDirectLine({
+        secret: 'FRbg223kxNLSl4Mk2rkzlT3h9T7zVmhUBtjW8eSkgzBABWzE1K12JQQJ99BCAC4f1cMAArohAAABAZBS3GRf.7VGZ7dL2G4yhY5ky1ZZBwGLo85gFcQ41CIHX544eFwgfDvJ8xsk4JQQJ99BCAC4f1cMAArohAAABAZBS40SA'
+      });
+
+      directLine.connectionStatus$.subscribe(status => {
+        if (status === 2) { // Connected
+          console.log('Direct Line connected, sending setLanguage event');
+          const languageEvent = {
+            type: 'event',
+            name: 'setLanguage',
+            from: {
+              id: 'user1'
+            },
+            value: {
+              language: 'ar',
+              username: 'بيشوي'
+            }
+          };
+          directLine.postActivity(languageEvent).subscribe(
+            id => console.log(`Event sent successfully, ID: ${id}`),
+            error => console.error(`Error sending event: ${error}`)
+          );
+        } else if (status === 4) { // Failed
+          document.getElementById('webchat').innerHTML = '<p style="color: red; text-align: center; padding: 12px;">فشل الاتصال بالبوت. يرجى المحاولة مرة أخرى لاحقًا.</p>';
+        }
+      });
+
+      window.WebChat.renderWebChat({
+        directLine,
+        store: webChatStore,
+        styleOptions,
+        locale: 'ar',
+        userID: 'user1', // Match the payload's from.id
+        username: 'محمد' // Match the payload's username
+      }, document.getElementById('webchat'));
+    } catch (error) {
+      console.error('Web Chat Error:', error);
+      document.getElementById('webchat').innerHTML = '<p style="color: red; text-align: center; padding: 12px;">حدث خطأ أثناء تحميل الدردشة. يرجى المحاولة لاحقًا.</p>';
+    }
+  }
+</script>
+</body>
+</html>
